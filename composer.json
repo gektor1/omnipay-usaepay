@@ -21,28 +21,9 @@
     "autoload": {
         "psr-4": { "Omnipay\\USAePay\\" : "src/" }
     },
-    "repositories": [
-        {
-            "type":"package",
-            "package": {
-                "name": "usaepay/usaepay-php",
-                "version": "1.7.1",
-                "source": {
-                    "url": "https://github.com/usaepay/usaepay-php.git",
-                    "type": "git",
-                    "reference": "5f7ead44488ab41eb9c37d0cd1acc5eaac678b72"
-                },
-                "autoload": {
-                    "files": [
-                        "usaepay.php"
-                    ]
-                }
-            }
-        }
-    ],
     "require": {
         "omnipay/common": "~2.0",
-        "usaepay/usaepay-php": "1.7.1"
+        "gektor1/usaepay-php": "*"
     },
     "require-dev": {
         "omnipay/tests": "~2.0"
