@@ -1,5 +1,5 @@
 {
-    "name": "ilanco/omnipay-usaepay",
+    "name": "gektor1/omnipay-usaepay",
     "type": "library",
     "description": "USA ePay driver for the Omnipay payment processing library",
     "keywords": [
@@ -14,8 +14,8 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Ilan Cohen",
-            "email": "ilanco@gmail.com"
+            "name": "Dmitry Medvedev",
+            "email": "gektor1@gmail.com"
         }
     ],
     "autoload": {
