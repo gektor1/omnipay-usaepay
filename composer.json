@@ -23,7 +23,7 @@
     },
     "require": {
         "omnipay/common": "~2.0",
-        "gektor1/usaepay-php": "~1.0"
+        "gektor1/usaepay-php": "v1.7.*"
     },
     "require-dev": {
         "omnipay/tests": "~2.0"
