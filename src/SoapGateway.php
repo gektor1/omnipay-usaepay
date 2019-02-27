@@ -5,14 +5,14 @@ namespace Omnipay\USAePay;
 use Omnipay\Common\AbstractGateway;
 
 /**
- * USAePay Gateway
+ * USAePay SOAP Gateway
  *
  * ### Example
  *
  * <code>
- * // Create a gateway for the USAePay Gateway
+ * // Create a gateway for the USAePay SOAP Gateway
  * // (routes to GatewayFactory::create)
- * $gateway = Omnipay::create('USAePay');
+ * $gateway = Omnipay::create('USAePay_Soap');
  *
  * // Initialise the gateway
  * $gateway->initialize(array(

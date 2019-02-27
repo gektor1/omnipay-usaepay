@@ -163,122 +163,16 @@ abstract class SoapAbstractRequest extends OmnipayAbstractRequest
     {
         return 'POST';
     }
-/*
-    public function sendData($data)
-    {
-        // check if we are mocking a request
-        $mock = false;
-
-        $listeners = $this->httpClient->getEventDispatcher()->getListeners('request.before_send');
-        foreach ($listeners as $listener) {
-            if (get_class($listener[0]) === 'Guzzle\Plugin\Mock\MockPlugin') {
-                $mock = true;
-
-                break;
-            }
-        }
-
-        // if we are mocking, use guzzle, otherwise use umTransaction
-        if ($mock) {
-            $httpRequest = $this->httpClient->createRequest(
-                $this->getHttpMethod(),
-                $this->getEndpoint(),
-                null,
-                $data
-            );
-
-            $httpResponse = $httpRequest->send();
-        } else {
-            $umTransaction = new umTransaction();
-            $umTransaction->usesandbox = $this->getSandbox();
-            $umTransaction->testmode = $this->getTestMode();
-            $umTransaction->key = $this->getSource();
-            $umTransaction->pin = $this->getPin();
-            $umTransaction->command = $this->getCommand();
-            $umTransaction->invoice = $this->getInvoice();
-            $umTransaction->amount = $data['amount'];
-            $umTransaction->description = $this->getDescription();
-            $umTransaction->addcustomer = $this->getAddCustomer();
-            $umTransaction->schedule = $this->getInterval();
-            $umTransaction->numleft = $this->getIntervalCount();
-            $umTransaction->start = 'next';
-
-            if (isset($data['card'])) {
-                $umTransaction->card = $this->getCard()->getNumber();
-                $umTransaction->exp = $this->getCard()->getExpiryDate('my');
-                $umTransaction->cvv2 = $this->getCard()->getCvv();
-                $umTransaction->cardholder = $this->getCard()->getName();
-                $umTransaction->street = $this->getCard()->getAddress1();
-                $umTransaction->zip = $this->getCard()->getPostcode();
-                $umTransaction->email = $this->getCard()->getEmail();
-
-                $umTransaction->billfname = $this->getCard()->getBillingFirstName();
-                $umTransaction->billlname = $this->getCard()->getBillingLastName();
-                $umTransaction->billcompany = $this->getCard()->getBillingCompany();
-                $umTransaction->billstreet = $this->getCard()->getBillingAddress1();
-                $umTransaction->billstreet2 = $this->getCard()->getBillingAddress2();
-                $umTransaction->billcity = $this->getCard()->getBillingCity();
-                $umTransaction->billstate = $this->getCard()->getBillingState();
-                $umTransaction->billzip = $this->getCard()->getBillingPostcode();
-                $umTransaction->billcountry = $this->getCard()->getBillingCountry();
-                $umTransaction->billphone = $this->getCard()->getBillingPhone();
-            } elseif ($this->getCardReference()) {
-                $umTransaction->card = $this->getCardReference();
-                $umTransaction->exp = '0000';
-            } else {
-                $umTransaction->refnum = $this->getTransactionReference();
-            }
-
-            $processResult = $umTransaction->Process();
-
-            if ($processResult !== true) {
-                throw new Exception($umTransaction->error);
-            }
-
-            $httpResponse = Guzzle\Http\Message\Response::fromMessage($umTransaction->rawresult);
-        }
-
-        return $this->response = new Response($this, $httpResponse->getBody());
-    }
-*/
     
     public function sendData($data)
     {
-        /*$data = $this->getData();
-        $this->request->merchantReferenceCode = $this->getMerchantReferenceCode();
-        $this->request->merchantID = $this->getMerchantId();
-        $context_options = array(
-            'http' => array(
-                'timeout' => $this->timeout,
-            ),
-        );
-        $context = stream_context_create($context_options);
-        // options we pass into the soap client
-        $soap_options = array(
-            'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | SOAP_COMPRESSION_DEFLATE,        // turn on HTTP compression
-            'encoding' => 'utf-8',        // set the internal character encoding to avoid random conversions
-            'exceptions' => true,        // throw SoapFault exceptions when there is an error
-            'connection_timeout' => $this->timeout,
-            'stream_context' => $context,
-        );
-        // if we're in test mode, don't cache the wsdl
-        if ($this->getTestMode()) {
-            $soap_options['cache_wsdl'] = WSDL_CACHE_NONE;
-        } else {
-            $soap_options['cache_wsdl'] = WSDL_CACHE_BOTH;
-        }*/
         try {
-            // create the soap client
-            $soap = new \SoapClient($this->getEndpoint()/*, $soap_options*/);
-        } catch (SoapFault $sf) {
+            $soap = new \SoapClient($this->getEndpoint());
+        } catch (\SoapFault $sf) {
             throw new \Exception($sf->getMessage(), $sf->getCode());
         }
-        
         $command = $this->getCommand();
-        
-        // save the request so you can get back what was generated at any point
         $response = $soap->$command($this->getToken(), $this->request);
-        
         return $this->response = new SoapResponse($this->request, $response);
     }
     
@@ -322,38 +216,19 @@ abstract class SoapAbstractRequest extends OmnipayAbstractRequest
      * @return array
      */
     public function getToken() {
-        $sourcekey = '_1uzA1u14K91dDk66Q9wj271LJlJ74Ff';
-        $pin = 'test';
-
         // generate random seed value
         $seed = time() . rand();
-
         // make hash value using sha1 function
-        $clear = $sourcekey . $seed . $pin;
-        $hash = sha1($clear);
-
-        $token = array(
-            'SourceKey' => $sourcekey,
+        $hash = sha1($this->getSource() . $seed . $this->getPin());
+        return [
+            'SourceKey' => $this->getSource(),
             'PinHash' => array(
                 'Type' => 'sha1',
                 'Seed' => $seed,
                 'HashValue' => $hash
             ),
-            'ClientIP' => $this->getIP()
-        );
-        return $token;
+            'ClientIP' => ''
+        ];
     }
 
-    public function getIP() {
-        $ch = curl_init("http://icanhazip.com/");
-        curl_setopt($ch, CURLOPT_HEADER, FALSE);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        $result = curl_exec($ch);
-        curl_close($ch);
-        if ($result === FALSE) {
-            return "ERROR";
-        } else {
-            return trim($result);
-        }
-    }
 }

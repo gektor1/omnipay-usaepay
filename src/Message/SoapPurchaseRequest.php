@@ -8,9 +8,9 @@ namespace Omnipay\USAePay\Message;
  * ### Example
  *
  * <code>
- * // Create a gateway for the USAePay Gateway
+ * // Create a gateway for the USAePay SOAP Gateway
  * // (routes to GatewayFactory::create)
- * $gateway = Omnipay::create('USAePay');
+ * $gateway = Omnipay::create('USAePay_Soap');
  *
  * // Initialise the gateway
  * $gateway->initialize(array(
@@ -50,15 +50,14 @@ class SoapPurchaseRequest extends SoapAuthorizeRequest {
 
     public function sendData($data) {
         
-        var_dump($data);exit;
-        
-        $this->request->AccountHolder = 'Tester Jones';
+        $this->request->AccountHolder = $this->getCard()->getFirstName() . ' ' . $this->getCard()->getLastName();
 
         $this->request->Details = new \stdClass();
         $this->request->Details->Description = 'Example Transaction';
         $this->request->Details->Amount = $this->getAmount();
         $this->request->Details->Invoice = $this->getParameter('invoice');
         $this->request->Details->Currency = $this->getParameter('currency');
+
         $this->request->CreditCardData = $this->createCard();
 
         return parent::sendData($data);
