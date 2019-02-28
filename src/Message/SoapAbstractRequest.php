@@ -8,6 +8,7 @@ use Guzzle\Http\ClientInterface;
 use Guzzle\Common\Event;
 use Omnipay\Common\Message\AbstractRequest as OmnipayAbstractRequest;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Omnipay\USAePay\BankAccount;
 
 /**
  * USAePay Abstract Request.
@@ -19,28 +20,20 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
  *
  * @method \Omnipay\USAePay\Message\Response send()
  */
-abstract class SoapAbstractRequest extends OmnipayAbstractRequest
-{
+abstract class SoapAbstractRequest extends OmnipayAbstractRequest {
+
     protected $liveEndpoint = 'https://www.usaepay.com/soap/gate/0AE595C1/usaepay.wsdl';
-    
-    protected $sandboxEndpoint = 'https://sandbox.usaepay.com/soap/gate/0AE595C1/usaepay.wsdl';    
-        
+    protected $sandboxEndpoint = 'https://sandbox.usaepay.com/soap/gate/0AE595C1/usaepay.wsdl';
+
     /**
      * @var \stdClass The generated SOAP request, saved immediately before a transaction is run.
      */
     protected $request;
+
     /**
      * @var \stdClass The retrieved SOAP response, saved immediately after a transaction is run.
      */
     protected $response;
-    
-    protected $intervals = [
-        '' => 'disabled',
-        'day' => 'daily',
-        'week' => 'weekly',
-        'month' => 'monthly',
-        'year' => 'annually',
-    ];
 
     abstract public function getCommand();
 
@@ -52,64 +45,52 @@ abstract class SoapAbstractRequest extends OmnipayAbstractRequest
      * @param ClientInterface $httpClient  A Guzzle client to make API calls with
      * @param HttpRequest     $httpRequest A Symfony HTTP request object
      */
-    public function __construct(ClientInterface $httpClient, HttpRequest $httpRequest)
-    {
+    public function __construct(ClientInterface $httpClient, HttpRequest $httpRequest) {
         parent::__construct($httpClient, $httpRequest);
         $this->request = $this->createRequest();
     }
-    
-    public function getSandbox()
-    {
+
+    public function getSandbox() {
         return $this->getParameter('sandbox');
     }
 
-    public function setSandbox($value)
-    {
+    public function setSandbox($value) {
         return $this->setParameter('sandbox', $value);
     }
 
-    public function getSource()
-    {
+    public function getSource() {
         return $this->getParameter('source');
     }
 
-    public function setSource($value)
-    {
+    public function setSource($value) {
         return $this->setParameter('source', $value);
     }
 
-    public function getPin()
-    {
+    public function getPin() {
         return $this->getParameter('pin');
     }
 
-    public function setPin($value)
-    {
+    public function setPin($value) {
         return $this->setParameter('pin', $value);
     }
 
-    public function getInvoice()
-    {
+    public function getInvoice() {
         return $this->getParameter('invoice');
     }
 
-    public function setInvoice($value)
-    {
+    public function setInvoice($value) {
         return $this->setParameter('invoice', $value);
     }
 
-    public function getDescription()
-    {
+    public function getDescription() {
         return $this->getParameter('description');
     }
 
-    public function setDescription($value)
-    {
+    public function setDescription($value) {
         return $this->setParameter('description', $value);
     }
 
-    public function getAddCustomer()
-    {
+    public function getAddCustomer() {
         if ($this->getParameter('addCustomer') === true) {
             return 'yes';
         }
@@ -117,55 +98,11 @@ abstract class SoapAbstractRequest extends OmnipayAbstractRequest
         return '';
     }
 
-    public function setAddCustomer($value)
-    {
+    public function setAddCustomer($value) {
         return $this->setParameter('addCustomer', $value);
     }
 
-    public function getInterval()
-    {
-        $interval = $this->getParameter('interval');
-
-        return $this->intervals[$interval];
-    }
-
-    public function setInterval($value)
-    {
-        if (empty($value)) {
-            $value = '';
-        }
-
-        if (!in_array($value, array_keys($this->intervals))) {
-            throw new Exception('Interval not in list of allowed values.');
-        }
-
-        return $this->setParameter('interval', $value);
-    }
-
-    public function getIntervalCount()
-    {
-        return $this->getParameter('intervalCount');
-    }
-
-    public function setIntervalCount($value)
-    {
-        return $this->setParameter('intervalCount', (int) $value);
-    }
-
-    /**
-     * Get HTTP Method.
-     *
-     * This is nearly always POST but can be over-ridden in sub classes.
-     *
-     * @return string
-     */
-    public function getHttpMethod()
-    {
-        return 'POST';
-    }
-    
-    public function sendData($data)
-    {
+    public function sendData($data) {
         try {
             $soap = new \SoapClient($this->getEndpoint());
         } catch (\SoapFault $sf) {
@@ -175,28 +112,23 @@ abstract class SoapAbstractRequest extends OmnipayAbstractRequest
         $response = $soap->$command($this->getToken(), $this->request);
         return $this->response = new SoapResponse($this->request, $response);
     }
-    
-    protected function getEndpoint()
-    {
+
+    protected function getEndpoint() {
         return $this->getSandbox() ? $this->sandboxEndpoint : $this->liveEndpoint;
     }
-    
+
     /**
      * @return \stdClass
      */
-    protected function createRequest()
-    {
-        // build the class for the request
+    protected function createRequest() {
         $request = new \stdClass();
-        
         return $request;
     }
-    
-        /**
+
+    /**
      * @return \stdClass
      */
-    protected function createCard()
-    {
+    protected function createCard() {
         $creditCard = $this->getCard();
 
         $usaepayCreditCard = new \stdClass();
@@ -209,7 +141,7 @@ abstract class SoapAbstractRequest extends OmnipayAbstractRequest
 
         return $usaepayCreditCard;
     }
-    
+
     /**
      * assembly ueSecurityToken as an array
      * 
@@ -229,6 +161,36 @@ abstract class SoapAbstractRequest extends OmnipayAbstractRequest
             ),
             'ClientIP' => ''
         ];
+    }
+
+    /**
+     * @param BankAccount $bankAccount
+     */
+    public function setBankAccount($bankAccount) {
+        $this->setParameter('bankAccount', $bankAccount);
+    }
+
+    /**
+     * return BankAccount
+     */
+    public function getBankAccount() {
+        return $this->getParameter('bankAccount');
+    }
+
+    /**
+     * @return \stdClass
+     */
+    protected function createBankAccount() {
+        /** @var BankAccount $bankAccount */
+        $bankAccount = $this->getBankAccount();
+        
+        $usaepayBankAccount = new \stdClass();
+        
+        $usaepayBankAccount->Account = $bankAccount->getAccountNumber();
+        $usaepayBankAccount->AccountType = $bankAccount->getBankAccountType();
+        $usaepayBankAccount->Routing = $bankAccount->getRoutingNumber();
+        
+        return $usaepayBankAccount;
     }
 
 }

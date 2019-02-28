@@ -42,10 +42,9 @@ namespace Omnipay\USAePay\Message;
  * }
  * </code>
  */
-class SoapAuthorizeRequest extends SoapAbstractRequest
-{
-        public function getData()
-    {
+class SoapAuthorizeRequest extends SoapAbstractRequest {
+
+    public function getData() {
         if (!is_null($this->getCard())) {
             $this->validate('amount', 'card');
             $this->getCard()->validate();
@@ -54,13 +53,13 @@ class SoapAuthorizeRequest extends SoapAbstractRequest
         } else {
             $this->validate('amount', 'bankAccount', 'card');
         }
-        
+
         //Since we use soap we dont really use this. Just validate here.
         return array();
     }
 
-    public function getCommand()
-    {
+    public function getCommand() {
         return 'runAuthOnly';
     }
+
 }

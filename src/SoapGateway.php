@@ -49,6 +49,11 @@ class SoapGateway extends AbstractGateway
 {
     public function getName()
     {
+        return 'USAePay.com';
+    }
+    
+    public function getShortName()
+    {
         return 'USAePay_Soap';
     }
 

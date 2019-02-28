@@ -45,20 +45,29 @@ namespace Omnipay\USAePay\Message;
 class SoapPurchaseRequest extends SoapAuthorizeRequest {
 
     public function getCommand() {
-        return 'runSale';
+        if (!is_null($this->getCard())) {
+            return 'runSale';
+        } elseif (!is_null($this->getBankAccount())) {
+            return 'runCheckSale';
+        }
     }
 
     public function sendData($data) {
-        
-        $this->request->AccountHolder = $this->getCard()->getFirstName() . ' ' . $this->getCard()->getLastName();
-
         $this->request->Details = new \stdClass();
         $this->request->Details->Description = 'Example Transaction';
         $this->request->Details->Amount = $this->getAmount();
         $this->request->Details->Invoice = $this->getParameter('invoice');
         $this->request->Details->Currency = $this->getParameter('currency');
 
-        $this->request->CreditCardData = $this->createCard();
+        if (!is_null($this->getCard())) {
+            $this->request->AccountHolder = $this->getCard()->getFirstName() . ' ' . $this->getCard()->getLastName();
+            
+            $this->request->CreditCardData = $this->createCard();
+        } elseif (!is_null($this->getBankAccount())) {
+            $this->request->AccountHolder = $this->getBankAccount()->getName();
+            
+            $this->request->CheckData = $this->createBankAccount();
+        }
 
         return parent::sendData($data);
     }
