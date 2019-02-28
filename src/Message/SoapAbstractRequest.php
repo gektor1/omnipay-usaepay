@@ -109,6 +109,7 @@ abstract class SoapAbstractRequest extends OmnipayAbstractRequest {
             throw new \Exception($sf->getMessage(), $sf->getCode());
         }
         $command = $this->getCommand();
+
         $response = $soap->$command($this->getToken(), $this->request);
         return $this->response = new SoapResponse($this->request, $response);
     }
@@ -163,13 +164,14 @@ abstract class SoapAbstractRequest extends OmnipayAbstractRequest {
         ];
     }
 
-    /**
-     * @param BankAccount $bankAccount
-     */
-    public function setBankAccount($bankAccount) {
-        $this->setParameter('bankAccount', $bankAccount);
+    public function setBankAccount($value)
+    {
+        if ($value && !$value instanceof BankAccount) {
+            $value = new BankAccount($value);
+        }
+        return $this->setParameter('bankAccount', $value);
     }
-
+    
     /**
      * return BankAccount
      */
