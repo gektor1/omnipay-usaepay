@@ -79,6 +79,20 @@ class SoapPurchaseRequest extends SoapAuthorizeRequest {
             $this->request->CheckData = $this->createBankAccount();
         }
 
+        if ($this->getItems()) {
+            $this->request->LineItems = [];
+            
+            foreach ($this->getItems() as $item) {
+                $lineItem = new \stdClass();
+                $lineItem->ProductName = $item->getName();
+                $lineItem->Qty = $item->getQuantity();
+                $lineItem->Description = $item->getDescription();
+                $lineItem->UnitPrice = $item->getPrice();
+                
+                $this->request->LineItems[] = $lineItem;
+            }
+        }
+        
         $this->request->CustReceipt = true;
         
         return parent::sendData($data);
