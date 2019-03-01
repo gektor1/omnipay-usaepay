@@ -54,7 +54,7 @@ class SoapPurchaseRequest extends SoapAuthorizeRequest {
 
     public function sendData($data) {
         $this->request->Details = new \stdClass();
-        $this->request->Details->Description = 'Example Transaction';
+        $this->request->Details->Description = $this->getDescription();
         $this->request->Details->Amount = $this->getAmount();
         $this->request->Details->Invoice = $this->getParameter('invoice');
         $this->request->Details->Currency = $this->getParameter('currency');
@@ -62,13 +62,25 @@ class SoapPurchaseRequest extends SoapAuthorizeRequest {
         if (!is_null($this->getCard())) {
             $this->request->AccountHolder = $this->getCard()->getFirstName() . ' ' . $this->getCard()->getLastName();
             
+            $this->request->BillingAddress = new \stdClass();
+            $this->request->BillingAddress->Email = $this->getCard()->getEmail();
+            $this->request->BillingAddress->FirstName = $this->getCard()->getFirstName();
+            $this->request->BillingAddress->LastName = $this->getCard()->getLastName();
+            
             $this->request->CreditCardData = $this->createCard();
         } elseif (!is_null($this->getBankAccount())) {
             $this->request->AccountHolder = $this->getBankAccount()->getName();
             
+            $this->request->BillingAddress = new \stdClass();
+            $this->request->BillingAddress->Email = $this->getBankAccount()->getEmail();
+            $this->request->BillingAddress->FirstName = $this->getBankAccount()->getFirstName();
+            $this->request->BillingAddress->LastName = $this->getBankAccount()->getLastName();
+            
             $this->request->CheckData = $this->createBankAccount();
         }
 
+        $this->request->CustReceipt = true;
+        
         return parent::sendData($data);
     }
 
