@@ -1,9 +1,9 @@
 <?php
 
-namespace Omnipay\USAePay\Message;
+namespace Omnipay\USAePay\Message\Soap;
 
 /**
- * USAePay Authorize Request
+ * USAePay Create Card Request
  *
  * ### Example
  *
@@ -28,10 +28,9 @@ namespace Omnipay\USAePay\Message;
  *             'cvv'          => '123',
  * ));
  *
- * // Do an authorize transaction on the gateway
- * $transaction = $gateway->authorize(array(
- *     'amount'                   => '10.00',
- *     'currency'                 => 'USD',
+ * // Do a create card transaction on the gateway
+ * $transaction = $gateway->createCard(array(
+ *     'amount'                   => '1.00',
  *     'card'                     => $card,
  * ));
  * $response = $transaction->send();
@@ -42,24 +41,24 @@ namespace Omnipay\USAePay\Message;
  * }
  * </code>
  */
-class SoapAuthorizeRequest extends SoapAbstractRequest {
+class GetCustomerRequest extends AbstractRequest {
 
     public function getData() {
-        if (!is_null($this->getCard())) {
-            $this->validate('amount', 'card');
-            $this->getCard()->validate();
-        } elseif (!is_null($this->getBankAccount())) {
-            $this->validate('amount', 'bankAccount');
-        } else {
-            $this->validate('amount', 'bankAccount', 'card');
-        }
-
-        //Since we use soap we dont really use this. Just validate here.
-        return array();
+        return $this->getCardReference();
     }
 
     public function getCommand() {
-        return 'runAuthOnly';
+        return 'getCustomer';
+    }
+
+    public function sendData($data) {
+        $soap = $this->getSoapClient();
+
+        $this->request = $data;
+
+        $response = $soap->getCustomer($this->getToken(), $data);
+
+        return $this->response = new GetCustomerResponse($data, $response);
     }
 
 }

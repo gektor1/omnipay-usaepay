@@ -1,11 +1,11 @@
 <?php
 
-namespace Omnipay\USAePay\Message;
+namespace Omnipay\USAePay\Message\Soap;
 
-use Exception;
-use Guzzle;
+//use Exception;
+//use Guzzle;
 use Guzzle\Http\ClientInterface;
-use Guzzle\Common\Event;
+//use Guzzle\Common\Event;
 use Omnipay\Common\Message\AbstractRequest as OmnipayAbstractRequest;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Omnipay\USAePay\BankAccount;
@@ -20,9 +20,10 @@ use Omnipay\USAePay\BankAccount;
  *
  * @method \Omnipay\USAePay\Message\Response send()
  */
-abstract class SoapAbstractRequest extends OmnipayAbstractRequest {
+abstract class AbstractRequest extends OmnipayAbstractRequest {
 
     protected $liveEndpoint = 'https://www.usaepay.com/soap/gate/0AE595C1/usaepay.wsdl';
+    
     protected $sandboxEndpoint = 'https://sandbox.usaepay.com/soap/gate/0AE595C1/usaepay.wsdl';
 
     /**
@@ -38,17 +39,17 @@ abstract class SoapAbstractRequest extends OmnipayAbstractRequest {
     abstract public function getCommand();
 
     abstract public function getData();
-
-    /**
-     * Create a new Request
-     *
-     * @param ClientInterface $httpClient  A Guzzle client to make API calls with
-     * @param HttpRequest     $httpRequest A Symfony HTTP request object
-     */
-    public function __construct(ClientInterface $httpClient, HttpRequest $httpRequest) {
-        parent::__construct($httpClient, $httpRequest);
-        $this->request = $this->createRequest();
-    }
+//
+//    /**
+//     * Create a new Request
+//     *
+//     * @param ClientInterface $httpClient  A Guzzle client to make API calls with
+//     * @param HttpRequest     $httpRequest A Symfony HTTP request object
+//     */
+//    public function __construct(ClientInterface $httpClient, HttpRequest $httpRequest) {
+//        parent::__construct($httpClient, $httpRequest);
+//        $this->request = $this->createRequest();
+//    }
 
     public function getSandbox() {
         return $this->getParameter('sandbox');
@@ -90,42 +91,64 @@ abstract class SoapAbstractRequest extends OmnipayAbstractRequest {
         return $this->setParameter('description', $value);
     }
 
-    public function getAddCustomer() {
-        if ($this->getParameter('addCustomer') === true) {
-            return 'yes';
-        }
-
-        return '';
+    public function getCustomer() {
+        return $this->getParameter('customer');
     }
 
-    public function setAddCustomer($value) {
-        return $this->setParameter('addCustomer', $value);
+    public function setCustomer($value) {
+        return $this->setParameter('customer', $value);
+    }
+    
+    public function getPaymentMethod() {
+        return $this->getParameter('paymentmethod');
+    }
+
+    public function setPaymentMethod($value) {
+        return $this->setParameter('paymentmethod', $value);
     }
 
     public function sendData($data) {
+        $soap = $this->getSoapClient();
+        
+        $this->request = $data;
+
+        $response = $soap->runTransaction($this->getToken(), $data);
+        
+        return $this->response = new Response($data, $response);
+    }
+    
+    public function getSoapClient() {
         try {
-            $soap = new \SoapClient($this->getEndpoint());
+            return new \SoapClient($this->getEndpoint());
         } catch (\SoapFault $sf) {
             throw new \Exception($sf->getMessage(), $sf->getCode());
         }
-        $command = $this->getCommand();
-
-        $response = $soap->$command($this->getToken(), $this->request);
-        return $this->response = new SoapResponse($this->request, $response);
     }
 
     protected function getEndpoint() {
         return $this->getSandbox() ? $this->sandboxEndpoint : $this->liveEndpoint;
     }
+//
+//    /**
+//     * @return \stdClass
+//     */
+//    protected function createRequest() {
+//        $request = new \stdClass();
+//        
+//        $request->Command = $this->getCommand();
+//        
+//        return $request;
+//    }
 
     /**
      * @return \stdClass
      */
-    protected function createRequest() {
-        $request = new \stdClass();
-        return $request;
+    public function getBaseData()
+    {
+        $data = new \stdClass();
+        return $data;
     }
-
+    
     /**
      * @return \stdClass
      */
@@ -173,7 +196,7 @@ abstract class SoapAbstractRequest extends OmnipayAbstractRequest {
     }
     
     /**
-     * return BankAccount
+     * @return BankAccount
      */
     public function getBankAccount() {
         return $this->getParameter('bankAccount');

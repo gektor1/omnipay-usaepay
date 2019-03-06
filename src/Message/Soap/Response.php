@@ -1,33 +1,29 @@
 <?php
 
-namespace Omnipay\USAePay\Message;
+namespace Omnipay\USAePay\Message\Soap;
 
 use Omnipay\Common\Message\AbstractResponse;
-use Omnipay\Common\Message\RequestInterface;
-use Omnipay\Common\Exception\InvalidResponseException;
 
 /**
- * USAePay Response
+ * USAePay SOAP Response
  *
  * This is the response class for all USAePay requests.
  *
  * @see \Omnipay\USAePay\Gateway
  */
-class SoapResponse extends AbstractResponse {
+class Response extends AbstractResponse {
 
     public function __construct($request, $data) {
         $this->request = $request;
-
         $this->data = $this->decodeData($data);
     }
 
     public function decodeData($data) {
-        return (array) $data;
+        return $data;
     }
 
     public function isSuccessful() {
-        return $this->data['ResultCode'] == "A";
-//        return isset($this->data['UMstatus']) && $this->data['UMstatus'] === 'Approved';
+        return $this->data->ResultCode == "A";
     }
 
     public function getAuthorizationCode() {
@@ -39,7 +35,7 @@ class SoapResponse extends AbstractResponse {
     }
 
     public function getTransactionReference() {
-        return isset($this->data['RefNum']) ? $this->data['RefNum'] : null;
+        return isset($this->data->RefNum) ? $this->data->RefNum : null;
     }
 
     public function getMessage() {
