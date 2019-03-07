@@ -41,12 +41,13 @@ namespace Omnipay\USAePay\Message\Soap;
  * }
  * </code>
  */
-class CreateCardRequest extends AbstractRequest {
+class UpdateCardRequest extends AbstractRequest {
 
     public function getData() {
         $data = $this->getBaseData();
 
         $this->validate('amount');
+
         /*if ($this->getCustomer()) {
             
         } else {*/
@@ -104,9 +105,8 @@ class CreateCardRequest extends AbstractRequest {
 
         $this->request = $data;
 
-        $response = $soap->addCustomer($this->getToken(), $data);
-
-        return $this->response = new CreateCardResponse($data, $response);
+        return $soap->updateCustomer($this->getToken(), $this->getCardReference(), $data);
+//        return $this->response = new GetCustomerResponse($data, $response);
     }
 
 }

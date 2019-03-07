@@ -3,14 +3,14 @@
 namespace Omnipay\USAePay\Message\Soap;
 
 /**
- * USAePay SOAP Purchase Request
+ * USAePay Create Card Request
  *
  * ### Example
  *
  * <code>
- * // Create a gateway for the USAePay SOAP Gateway
+ * // Create a gateway for the USAePay Gateway
  * // (routes to GatewayFactory::create)
- * $gateway = Omnipay::create('USAePay_Soap');
+ * $gateway = Omnipay::create('USAePay');
  *
  * // Initialise the gateway
  * $gateway->initialize(array(
@@ -28,10 +28,9 @@ namespace Omnipay\USAePay\Message\Soap;
  *             'cvv'          => '123',
  * ));
  *
- * // Do a purchase transaction on the gateway
- * $transaction = $gateway->purchase(array(
- *     'amount'                   => '10.00',
- *     'currency'                 => 'USD',
+ * // Do a create card transaction on the gateway
+ * $transaction = $gateway->createCard(array(
+ *     'amount'                   => '1.00',
  *     'card'                     => $card,
  * ));
  * $response = $transaction->send();
@@ -42,30 +41,22 @@ namespace Omnipay\USAePay\Message\Soap;
  * }
  * </code>
  */
-class PurchaseCustomerRequest extends AuthorizeRequest {
+class DeleteCardRequest extends AbstractRequest {
+
+    public function getData() {
+        return $this->getCardReference();
+    }
 
     public function getCommand() {
-        if (!is_null($this->getCard())) {
-            return 'sale';
-        } elseif (!is_null($this->getBankAccount())) {
-            return 'check';
-        }
-    }
-    
-    public function getData() {
-        $data = parent::getData();
-        
-        return $data;        
+        return 'getCustomer';
     }
 
     public function sendData($data) {
         $soap = $this->getSoapClient();
-        
+
         $this->request = $data;
 
-        $response = $soap->runCustomerTransaction($this->getToken(), $this->getCardReference(), 0, $data);
-
-        return $this->response = new Response($data, $response);
+        return $soap->deleteCustomer($this->getToken(), $data);
     }
-    
+
 }

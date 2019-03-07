@@ -48,7 +48,7 @@ class AuthorizeRequest extends AbstractRequest {
         $data = $this->getBaseData();
 
         $this->validate('amount');
-        if ($this->getCustomer()) {
+        if ($this->getCardReference()) {
             
         } else {
             if (!is_null($this->getCard())) {

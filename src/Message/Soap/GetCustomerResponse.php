@@ -27,7 +27,19 @@ class GetCustomerResponse extends AbstractResponse {
     }
 
     public function getCardReference() {
-        return $this->data;
+        return $this->data->CustNum;
+    }
+    
+    public function getCustomerPaymentMethod() {
+        return $this->data->PaymentMethods[0];
+    }
+    
+    public function getCardPaymentMethodReference() {
+        return $this->data->PaymentMethods[0]->MethodID;
+    }
+    
+    public function getCustomerBillingAddress() {
+        return $this->data->BillingAddress;
     }
 
 }
