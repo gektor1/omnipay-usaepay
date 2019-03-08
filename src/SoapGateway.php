@@ -256,23 +256,23 @@ class SoapGateway extends AbstractGateway
 //    {
 //        return $this->createRequest('\Omnipay\USAePay\Message\Soap\CreateSubscriptionRequest', $parameters);
 //    }
-//    
-//    /**
-//     * @param array $parameters
-//     * @return SoapQueryBatchResponse
-//     */
-//    public function queryBatch(array $parameters = array())
-//    {
-//        return $this->createRequest('\Omnipay\USAePay\Message\Soap\QueryBatchRequest', $parameters);
-//    }
-//    
-//    /**
-//     * @param array $parameters
-//     * @return SoapQueryBatchDetailResponse
-//     */
-//    public function queryBatchDetail(array $parameters = array())
-//    {
-//        return $this->createRequest('\Omnipay\USAePay\Message\Soap\QueryBatchDetailRequest', $parameters);
-//    }
+    
+    /**
+     * @param array $parameters
+     * @return SoapQueryBatchResponse
+     */
+    public function queryBatch(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\USAePay\Message\Soap\QueryBatchRequest', $parameters);
+    }
+    
+    /**
+     * @param array $parameters
+     * @return SoapQueryBatchDetailResponse
+     */
+    public function queryBatchDetail(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\USAePay\Message\Soap\QueryBatchDetailRequest', $parameters);
+    }
     
 }
