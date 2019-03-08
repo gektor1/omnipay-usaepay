@@ -48,9 +48,9 @@ class UpdateCardRequest extends AbstractRequest {
 
         $this->validate('amount');
 
-        /*if ($this->getCustomer()) {
+        if ($this->getCardReference()) {
             
-        } else {*/
+        } else {
             if (!is_null($this->getCard())) {
                 $this->validate('card');
                 $this->getCard()->validate();
@@ -59,7 +59,7 @@ class UpdateCardRequest extends AbstractRequest {
             } else {
                 $this->validate('bankAccount', 'card');
             }
-        //}
+        }
 
         $data->BillingAddress = new \stdClass();
         
