@@ -124,6 +124,14 @@ class BankAccount {
         return $this->setParameter('bankName', $value);
     }
 
+    public function getAccountHolder() {
+        return $this->getParameter('accountHolder');
+    }
+
+    public function setAccountHolder($value) {
+        return $this->setParameter('accountHolder', $value);
+    }
+
     public function getFirstName() {
         return $this->getBillingFirstName();
     }

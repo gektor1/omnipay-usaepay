@@ -79,7 +79,7 @@ class AuthorizeRequest extends AbstractRequest {
 
             $data->CreditCardData = $this->createCard();
         } elseif (!is_null($this->getBankAccount())) {
-            $data->AccountHolder = $this->getBankAccount()->getName();
+            $data->AccountHolder = $this->getBankAccount()->getAccountHolder();
 
             $data->BillingAddress = new \stdClass();
             $data->BillingAddress->Email = $this->getBankAccount()->getEmail();
