@@ -134,18 +134,6 @@ class SoapGateway extends AbstractGateway
     }
 
 //    /**
-//     * Create a purchase request.
-//     *
-//     * @param array $parameters
-//     *
-//     * @return \Omnipay\USAePay\Message\PurchaseRequest
-//     */
-//    public function customerPurchase(array $parameters = array())
-//    {
-//        return $this->createRequest('\Omnipay\USAePay\Message\Soap\CustomerPurchaseRequest', $parameters);
-//    }
-//
-//    /**
 //     * Refund Request.
 //     *
 //     * The 'refund' command allows the merchant to refund some or all of a
@@ -213,49 +201,6 @@ class SoapGateway extends AbstractGateway
     {
         return $this->createRequest('\Omnipay\USAePay\Message\Soap\GetCustomerRequest', $parameters);
     }
-//    
-//    /**
-//     * Create Card.
-//     *
-//     * This call can be used to create a new customer or add a card
-//     * to an existing customer.
-//     *
-//     * @param array $parameters
-//     *
-//     * @return \Omnipay\USAePay\Message\Soap\CreateCardFromTransactionRequest
-//     */
-//    public function createCardFromTransaction(array $parameters = array())
-//    {
-//        return $this->createRequest('\Omnipay\USAePay\Message\Soap\CreateCardFromTransactionRequest', $parameters);
-//    }
-//    
-//    /**
-//     * Create Card.
-//     *
-//     * This call can be used to create a new customer or add a card
-//     * to an existing customer.
-//     *
-//     * @param array $parameters
-//     *
-//     * @return \Omnipay\USAePay\Message\Soap\GetCustomerRequest
-//     */
-//    public function getCustomer(array $parameters = array())
-//    {
-//        return $this->createRequest('\Omnipay\USAePay\Message\Soap\GetCustomerRequest', $parameters);
-//    }
-
-//    /**
-//     * Create Subscription
-//     *
-//     * This call can be used to create a subscription (recurring payment).
-//     *
-//     * @param array $parameters
-//     * @return \Omnipay\USAePay\Message\CreateSubscriptionRequest
-//     */
-//    public function createSubscription(array $parameters = array())
-//    {
-//        return $this->createRequest('\Omnipay\USAePay\Message\Soap\CreateSubscriptionRequest', $parameters);
-//    }
     
     /**
      * @param array $parameters
@@ -273,6 +218,11 @@ class SoapGateway extends AbstractGateway
     public function queryBatchDetail(array $parameters = array())
     {
         return $this->createRequest('\Omnipay\USAePay\Message\Soap\QueryBatchDetailRequest', $parameters);
+    }
+    
+    public function searchTransactions(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\USAePay\Message\Soap\SearchTransactionsRequest', $parameters);
     }
     
 }
