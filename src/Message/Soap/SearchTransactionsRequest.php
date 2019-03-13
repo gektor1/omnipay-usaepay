@@ -35,13 +35,8 @@ class SearchTransactionsRequest extends AbstractRequest {
         $data = [
             [
                 'Field' => 'checktrace.settled',
-                'Type' => 'gt',
-                'Value' => $this->getStart()->format('Y-m-d H:i:s')
-            ],
-            [
-                'Field' => 'checktrace.settled',
-                'Type' => 'lt',
-                'Value' => $this->getEnd()->format('Y-m-d H:i:s')
+                'Type' => 'eq',
+                'Value' => $this->getStart()->format('Y-m-d')
             ]
         ];
 
