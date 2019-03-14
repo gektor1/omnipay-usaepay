@@ -39,7 +39,7 @@ class Response extends AbstractResponse {
     }
 
     public function getMessage() {
-//        return isset($this->data['UMerror']) ? $this->data['UMerror'] : null;
+        return isset($this->data->Error) ? $this->data->Error : null;
     }
 
     public function getCardReferenceToken() {
