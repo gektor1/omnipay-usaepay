@@ -76,7 +76,9 @@ class AuthorizeRequest extends AbstractRequest {
             $data->BillingAddress->Email = $this->getCard()->getEmail();
             $data->BillingAddress->FirstName = $this->getCard()->getFirstName();
             $data->BillingAddress->LastName = $this->getCard()->getLastName();
-
+            if ($this->getCard()->getPostcode())
+                $data->BillingAddress->Zip = $this->getCard()->getPostcode();
+            
             $data->CreditCardData = $this->createCard();
         } elseif (!is_null($this->getBankAccount())) {
             $data->AccountHolder = $this->getBankAccount()->getAccountHolder();
@@ -85,7 +87,9 @@ class AuthorizeRequest extends AbstractRequest {
             $data->BillingAddress->Email = $this->getBankAccount()->getEmail();
             $data->BillingAddress->FirstName = $this->getBankAccount()->getFirstName();
             $data->BillingAddress->LastName = $this->getBankAccount()->getLastName();
-
+            if ($this->getBankAccount()->getPostcode())
+                $data->BillingAddress->Zip = $this->getBankAccount()->getPostcode();
+            
             $data->CheckData = $this->createBankAccount();
         }
 

@@ -163,6 +163,10 @@ abstract class AbstractRequest extends OmnipayAbstractRequest {
             $usaepayCreditCard->CardCode = $creditCard->getCvv();
         }
 
+        if (!empty($creditCard->getPostcode())) {
+            $usaepayCreditCard->AvsZip = $creditCard->getPostcode();
+        }
+        
         return $usaepayCreditCard;
     }
 
