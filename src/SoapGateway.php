@@ -187,6 +187,11 @@ class SoapGateway extends AbstractGateway
         return $this->createRequest('\Omnipay\USAePay\Message\Soap\UpdateCardRequest', $parameters);
     }
     
+    public function updateCardPaymentMethod(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\USAePay\Message\Soap\UpdateCardPaymentMethodRequest', $parameters);
+    }
+    
     public function deleteCard(array $parameters = array())
     {
         return $this->createRequest('\Omnipay\USAePay\Message\Soap\DeleteCardRequest', $parameters);

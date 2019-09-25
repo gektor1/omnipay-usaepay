@@ -92,7 +92,7 @@ class UpdateCardRequest extends AbstractRequest {
         $data->Schedule = '';
         $data->SendReceipt = true;
         $data->Source = '';
-                
+
         return $data;
     }
 
