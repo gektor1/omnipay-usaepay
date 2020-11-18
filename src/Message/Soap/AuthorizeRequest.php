@@ -109,7 +109,11 @@ class AuthorizeRequest extends AbstractRequest {
 
         $data->CustReceipt = true;
         $data->CustomerID = $this->getCustomer();
-
+        
+        if ($this->getClientIp()) {
+            $data->ClientIP = $this->getClientIp();
+        }
+        
         return $data;
     }
     
